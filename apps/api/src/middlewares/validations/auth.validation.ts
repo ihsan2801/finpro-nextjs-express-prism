@@ -1,16 +1,14 @@
-// src/middlewares/validations/auth.validation.ts
 import { Request, Response, NextFunction } from "express";
 import { body, validationResult } from "express-validator";
 
-// Validasi untuk registrasi pengguna
 export const RegisterValidation = [
   body("email")
-    .trim()
     .notEmpty()
+    .trim()
     .withMessage("Email is required")
     .isEmail()
     .withMessage("Invalid email format"),
-  body("name")
+  body("fullname")
     .notEmpty()
     .withMessage("Name is required")
     .isLength({ min: 3 })
@@ -22,18 +20,22 @@ export const RegisterValidation = [
     .withMessage("Password must be 3 characters minimum")
     .matches(/^(?=.*[\d])(?=.*[!@#$%^&*])[\w!@#$%^&*]{6,16}$/)
     .withMessage(
-      "Password needs to have at least 1 number and special characters"
+      "Password need to have atleast 1 number and special characters"
     ),
   (req: Request, res: Response, next: NextFunction) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return next(new Error(errors.array()[0].msg));
+    try {
+      const errors = validationResult(req);
+      console.log(errors);
+
+      if (!errors.isEmpty()) throw new Error(errors.array()[0].msg);
+
+      next();
+    } catch (err) {
+      next(err);
     }
-    next();
   },
 ];
 
-// Validasi untuk login pengguna
 export const LoginValidation = [
   body("email")
     .notEmpty()
@@ -41,11 +43,17 @@ export const LoginValidation = [
     .isEmail()
     .withMessage("Invalid email format"),
   body("password").notEmpty().withMessage("Password is required"),
+
   (req: Request, res: Response, next: NextFunction) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return next(new Error(errors.array()[0].msg));
+    try {
+      const errors = validationResult(req);
+      console.log(errors);
+
+      if (!errors.isEmpty()) throw new Error(errors.array()[0].msg);
+
+      next();
+    } catch (err) {
+      next(err);
     }
-    next();
   },
 ];
